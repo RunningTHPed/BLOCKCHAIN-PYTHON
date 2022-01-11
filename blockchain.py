@@ -1,6 +1,7 @@
 import datetime
 import json
 import hashlib
+from flask import Flask
 class Blockchain:
     def __init__(self):
         #เก็บกลุ่มของ Block
@@ -47,11 +48,21 @@ class Blockchain:
                 new_nonce+=1
         return new_nonce
 
+#web server
+app = Flask(__name__)
+
+#routing
+@app.route('/')
+def hello():
+    return "<p>Hello Blockchain</p>"
+
+@app.route('/ped')
+def hello_test():
+    return "<p>Hello Ped</p>"
+
+#run server
+if __name__ == "__main__":
+    app.run()
+
 #ใช้งาน Blockchain
 blockchain = Blockchain()
-#เข้ารหัส block แรก
-print(blockchain.hash(blockchain.chain[0]))
-#เข้ารหัส block สอง
-print(blockchain.hash(blockchain.chain[1]))
-
-#print(blockchain.get_previous_block())
