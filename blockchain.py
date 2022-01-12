@@ -1,14 +1,17 @@
 import datetime
 import json
 import hashlib
-from flask import Flask
+from flask import Flask , jsonify
+from flask.helpers import make_response
 class Blockchain:
     def __init__(self):
         #เก็บกลุ่มของ Block
         self.chain = [] #list ที่่เก็บ block
         #genesis block
         self.create_block(nonce=1,previous_hash="0")
-        self.create_block(nonce=10,previous_hash="100")
+        self.create_block(nonce=10,previous_hash="00")
+        self.create_block(nonce=20,previous_hash="000")
+
 
     #สร้าง Block ขึ้นมาในระบบ Blockchain
     def create_block(self,nonce,previous_hash):
@@ -56,9 +59,15 @@ app = Flask(__name__)
 def hello():
     return "<p>Hello Blockchain</p>"
 
-@app.route('/ped')
-def hello_test():
-    return "<p>Hello Ped</p>"
+@app.route('/get_chain',methods=["GET"])
+def get_chain():
+    response = make_response(
+        jsonify(
+            {"chain":blockchain.chain, "length":len(blockchain.chain)}
+        ),200
+    )
+    response.headers["Content-Type"] = "application/json"
+    return response
 
 #run server
 if __name__ == "__main__":
