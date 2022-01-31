@@ -1,16 +1,18 @@
 import datetime
 import json
 import hashlib
+from urllib import response
 from flask import Flask , jsonify
 from flask.helpers import make_response
+from numpy import block
 class Blockchain:
     def __init__(self):
         #เก็บกลุ่มของ Block
         self.chain = [] #list ที่่เก็บ block
         #genesis block
         self.create_block(nonce=1,previous_hash="0")
-        self.create_block(nonce=10,previous_hash="00")
-        self.create_block(nonce=20,previous_hash="000")
+        #self.create_block(nonce=10,previous_hash="00")
+        #self.create_block(nonce=20,previous_hash="000")
 
 
     #สร้าง Block ขึ้นมาในระบบ Blockchain
@@ -70,6 +72,26 @@ def get_chain():
     )
     response.headers["Content-Type"] = "application/json"
     return response
+
+@app.route('/mining',methods=["GET"])
+def mining_block():
+    #pow
+    previous_block = blockchain.get_previous_block()
+    previous_nonce = previous_block["nonce"]
+    #nonce
+    nonce = blockchain.proof_of_work(previous_nonce)
+    #hash block ก่อนหน้า
+    previous_hash = blockchain.hash(previous_block)
+    #update block ใหม่
+    block = blockchain.create_block(nonce, previous_hash)
+    response = {
+        "message":"Mining Block success",
+        "index":block["index"],
+        "timestamp":block["timestamp"],
+        "nonce":block["nonce"],
+        "previous_hash":block["previous_hash"]
+    }
+    return jsonify(response),200
 
 #run server
 if __name__ == "__main__":
