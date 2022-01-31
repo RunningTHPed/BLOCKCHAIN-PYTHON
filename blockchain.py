@@ -53,6 +53,24 @@ class Blockchain:
                 new_nonce+=1
         return new_nonce
 
+    #ตรวจสอบ block
+    def is_chain_valid(self,chain):
+        previous_block = chain[0]
+        block_index = 1
+        while block_index < len(chain):
+            block = chain[block_index] #block ที่ตรวจสอบ
+            if block["previous_hash"] != self.hash(previous_block):
+                return False
+            previous_nonce = previous_block["nonce"] #nonce block ก่อนหน้า
+            nonce = block["nonce"] #nonce ของ block ที่ตรวจสอบ
+            hashoperation = hashlib.sha256(str(nonce**2 - previous_nonce**2).encode()).hexdigest()
+
+            if hashoperation[:4] != "0000":
+                return False
+            previous_block = block
+            block_index += 1
+        return True
+
 #web server
 app = Flask(__name__)
 #ใช้งาน Blockchain
@@ -91,6 +109,15 @@ def mining_block():
         "nonce":block["nonce"],
         "previous_hash":block["previous_hash"]
     }
+    return jsonify(response),200
+
+@app.route('/is_valid',methods=["GET"])
+def is_valid():
+    blockchain.is_chain_valid(blockchain.chain)
+    if is_valid:
+        response = {"message":"Blockchain is valid."}
+    else:
+        response = {"message":"Have Problem, Blockchain is not valid."}
     return jsonify(response),200
 
 #run server
