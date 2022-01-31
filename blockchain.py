@@ -53,6 +53,8 @@ class Blockchain:
 
 #web server
 app = Flask(__name__)
+#ใช้งาน Blockchain
+blockchain = Blockchain()
 
 #routing
 @app.route('/')
@@ -73,5 +75,4 @@ def get_chain():
 if __name__ == "__main__":
     app.run()
 
-#ใช้งาน Blockchain
-blockchain = Blockchain()
+
