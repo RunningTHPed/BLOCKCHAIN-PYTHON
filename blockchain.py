@@ -9,10 +9,9 @@ class Blockchain:
     def __init__(self):
         #เก็บกลุ่มของ Block
         self.chain = [] #list ที่่เก็บ block
+        self.transaction = 0 #จำนวนเงิน
         #genesis block
         self.create_block(nonce=1,previous_hash="0")
-        #self.create_block(nonce=10,previous_hash="00")
-        #self.create_block(nonce=20,previous_hash="000")
 
 
     #สร้าง Block ขึ้นมาในระบบ Blockchain
@@ -22,6 +21,7 @@ class Blockchain:
             "index":len(self.chain)+1,
             "timestamp":str(datetime.datetime.now()),
             "nonce":nonce,
+            "data" :self.transaction,
             "previous_hash":previous_hash
         }
         self.chain.append(block)
@@ -93,6 +93,8 @@ def get_chain():
 
 @app.route('/mining',methods=["GET"])
 def mining_block():
+    amount = 1000000 #จำนวนเงินในการทำธุรกรรม
+    blockchain.transaction = blockchain.transaction+amount
     #pow
     previous_block = blockchain.get_previous_block()
     previous_nonce = previous_block["nonce"]
@@ -106,6 +108,7 @@ def mining_block():
         "message":"Mining Block success",
         "index":block["index"],
         "timestamp":block["timestamp"],
+        "data":block["data"],
         "nonce":block["nonce"],
         "previous_hash":block["previous_hash"]
     }
